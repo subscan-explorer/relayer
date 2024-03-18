@@ -10,8 +10,14 @@ export class Encrypto {
   public passwd: string;
 
   async readPasswd() {
-    const passwd = question("Password:", { hideEchoBack: true });
-    this.passwd = createHash("sha256").update(String(passwd)).digest("base64");
+    // get password from env
+    if (process.env.HELIX_RELAYER_PASSWORD) {
+      this.passwd = createHash('sha256').update(String(process.env.HELIX_RELAYER_PASSWORD)).digest('base64');
+      return;
+    }
+    // exit os print error
+    console.error("No password found in env");
+    process.exit(1);
   }
 
   public decrypt(str): string {
